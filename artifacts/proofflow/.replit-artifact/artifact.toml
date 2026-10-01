@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ProofFlow"
+description = "A milestone-proof workspace for clients and workers to create projects, submit verifiable work, approve milestones, track clearly labeled demo payments, and build portable reputation."
+version = "1.0.0"
+id = "artifacts/proofflow"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24689
+
+[services.development]
+run = "pnpm --filter @workspace/proofflow run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/proofflow", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/proofflow/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24689"
+BASE_PATH = "/"

@@ -1,0 +1,991 @@
+Build a polished, production-style MVP called "ProofFlow".
+
+ProofFlow is a Web3-powered milestone escrow and proof-verification platform for freelancers, agencies, businesses, contractors, NGOs, and clients.
+
+CORE IDEA:
+Instead of trusting screenshots, ratings, or claims that work was completed, ProofFlow lets a client create a project with milestones, a worker submits verifiable proof for each milestone, the client verifies the work, and eventually a blockchain smart contract will release the milestone payment.
+
+IMPORTANT:
+This is the MVP phase.
+
+DO NOT implement real blockchain transactions yet.
+DO NOT pretend mock transactions are real blockchain transactions.
+Build the application architecture so the mock blockchain service can later be replaced by a real Stellar/Soroban implementation without rewriting the frontend.
+
+The application should feel like a serious startup product, NOT a generic hackathon template.
+
+==================================================
+TECH STACK
+==================================================
+
+Frontend:
+- React
+- TypeScript
+- Vite
+- React Router
+- Plain CSS / CSS modules
+- Do NOT use Tailwind CSS
+- Use Lucide React for icons
+- Recharts for charts where useful
+
+Backend:
+- Node.js
+- Express.js
+- TypeScript
+- MongoDB
+- Mongoose
+
+Architecture:
+- Frontend and backend should be clearly separated
+- Create reusable services
+- Use REST APIs
+- Use environment variables
+- Keep blockchain integration behind a service abstraction
+
+Do not use Prisma.
+
+==================================================
+DESIGN DIRECTION
+==================================================
+
+Create a premium Web3 SaaS interface.
+
+Visual direction:
+- Clean
+- Minimal
+- Modern
+- Professional
+- Slight Web3 aesthetic
+- Lots of whitespace
+- Rounded cards
+- Subtle borders
+- Soft shadows
+- Elegant gradients used sparingly
+- Excellent typography
+- Smooth micro-interactions
+- Responsive on desktop, tablet and mobile
+
+Avoid:
+- Excessive neon
+- Overly futuristic crypto visuals
+- Generic AI-generated dashboard appearance
+- Excessive animations
+- Cluttered layouts
+
+Use a light-first interface with white/off-white surfaces and deep navy/indigo text.
+
+Create a consistent design system:
+- colors
+- typography
+- spacing
+- border radius
+- shadows
+- buttons
+- badges
+- cards
+- inputs
+- modals
+- tables
+
+==================================================
+BRAND
+==================================================
+
+Product name:
+ProofFlow
+
+Tagline:
+"Don't trust the claim. Verify the proof."
+
+Secondary description:
+"Milestone payments backed by verifiable proof."
+
+Create a simple professional logo/icon using the concept of:
+- verification
+- proof
+- flow
+- trust
+
+Do not use copyrighted logos.
+
+==================================================
+USER ROLES
+==================================================
+
+There are two primary roles:
+
+1. CLIENT
+2. WORKER
+
+For the MVP, provide a simple role selector during demo login.
+
+Do not build complicated enterprise permissions yet.
+
+==================================================
+MAIN USER FLOW
+==================================================
+
+CLIENT:
+
+1. Sign up / login
+2. Create a project
+3. Add project description
+4. Add worker
+5. Set project budget
+6. Create milestones
+7. View project
+8. View milestone progress
+9. Review submitted proof
+10. Approve or reject milestone
+11. View payment status
+12. View project history
+
+WORKER:
+
+1. Sign up / login
+2. View assigned projects
+3. Open project
+4. View milestones
+5. Submit proof
+6. Add description
+7. Add proof URL
+8. Add GitHub URL
+9. Upload proof/document if possible
+10. Track verification status
+11. View completed work
+12. View ProofScore
+
+==================================================
+PAGES
+==================================================
+
+Build these pages:
+
+PUBLIC:
+
+/
+Landing page
+
+/login
+Login page
+
+/signup
+Signup page
+
+
+CLIENT / WORKER APP:
+
+/dashboard
+Main dashboard
+
+/projects
+Projects list
+
+/projects/new
+Create project
+
+/projects/:id
+Project details
+
+/projects/:id/milestones/:milestoneId
+Milestone details
+
+/projects/:id/proof/:milestoneId
+Proof submission/review
+
+/profile
+User profile
+
+/reputation
+ProofScore reputation page
+
+/transactions
+Transaction/history page
+
+/settings
+Settings
+
+
+==================================================
+LANDING PAGE
+==================================================
+
+Create a strong startup-style landing page.
+
+Hero:
+
+"Don't trust the claim.
+Verify the proof."
+
+Supporting text:
+
+"ProofFlow turns project milestones into verifiable work, structured payments, and portable reputation."
+
+Buttons:
+
+"Start a Project"
+"Explore Demo"
+
+Add a visual project-flow section:
+
+PROJECT CREATED
+↓
+MILESTONE DEFINED
+↓
+PROOF SUBMITTED
+↓
+VERIFICATION
+↓
+PAYMENT RELEASED
+↓
+REPUTATION UPDATED
+
+Add sections:
+
+- How ProofFlow works
+- Why ProofFlow
+- Proof-backed reputation
+- Milestone escrow
+- AI-assisted verification (coming soon)
+- CTA
+
+Do NOT make unsupported claims about real blockchain functionality yet.
+
+Clearly label future Web3 functionality as:
+"Coming in the Web3 integration"
+
+==================================================
+DASHBOARD
+==================================================
+
+Create a premium dashboard.
+
+Header:
+
+"Good afternoon, [Name]"
+
+Subtitle:
+"Here's what's happening with your projects."
+
+Stats:
+
+Active Projects
+Completed Projects
+Total Project Value
+Verified Milestones
+
+Example demo data:
+
+Active Projects: 4
+Completed Projects: 17
+Verified Milestones: 63
+Total Value: ₹4.8L
+
+Add:
+
+Recent Projects
+Upcoming Milestones
+Recent Activity
+ProofScore card
+
+ProofScore card:
+
+94
+
+"Excellent verification history"
+
+Show:
+- 17 completed projects
+- 63 verified milestones
+- 94% on-time completion
+- 1 dispute
+
+These are DEMO values and should be clearly replaceable with database values.
+
+==================================================
+CREATE PROJECT
+==================================================
+
+Build a polished multi-step project creation flow.
+
+Step 1:
+Project information
+
+Fields:
+- Project name
+- Description
+- Client
+- Worker
+- Category
+- Start date
+- Expected completion date
+
+Step 2:
+Budget
+
+- Total budget
+- Currency
+
+Default currency:
+INR
+
+Step 3:
+Milestones
+
+Allow adding/removing milestones.
+
+Each milestone:
+
+- Name
+- Description
+- Amount
+- Due date
+
+Example:
+
+Website Development
+
+Milestone 1:
+UI Design
+₹5,000
+
+Milestone 2:
+Frontend Development
+₹10,000
+
+Milestone 3:
+Backend Development
+₹7,000
+
+Milestone 4:
+Deployment
+₹8,000
+
+Show automatic total calculation.
+
+Step 4:
+Review
+
+Show complete project summary.
+
+Button:
+"Create Project"
+
+After creation, redirect to project details.
+
+==================================================
+PROJECT DETAILS
+==================================================
+
+Create a visually strong project page.
+
+Header:
+
+Butter Brews Bistro Website
+
+Status:
+IN PROGRESS
+
+Budget:
+₹30,000
+
+Progress:
+75%
+
+Show progress bar.
+
+Show milestone timeline:
+
+1. UI Design
+✓ Verified
+₹5,000
+
+2. Frontend Development
+✓ Verified
+₹10,000
+
+3. Backend Development
+● Under Review
+₹7,000
+
+4. Deployment
+○ Pending
+₹8,000
+
+Each milestone should have:
+- Status
+- Amount
+- Due date
+- Proof status
+- Verification status
+- Payment status
+
+Add buttons based on role.
+
+CLIENT:
+"Review Proof"
+
+WORKER:
+"Submit Proof"
+
+==================================================
+PROOF SUBMISSION
+==================================================
+
+Worker should be able to submit proof.
+
+Fields:
+
+Milestone
+Proof title
+Description
+GitHub repository URL
+Live deployment URL
+Additional proof URL
+File upload
+Notes
+
+Add a proof preview card.
+
+After submission:
+
+Status:
+
+"Proof Submitted"
+
+Timeline:
+
+Proof submitted
+↓
+Awaiting verification
+↓
+Client review
+↓
+Approved / Rejected
+
+For MVP, AI verification should be represented as a clearly marked simulated/demo analysis only.
+
+Label it:
+
+"AI Verification Preview"
+
+Do NOT falsely claim an AI model analyzed the proof if it did not.
+
+==================================================
+PROOF REVIEW
+==================================================
+
+Client sees:
+
+Milestone:
+Frontend Development
+
+Worker:
+Alex Sharma
+
+Amount:
+₹10,000
+
+Submitted proof:
+
+GitHub:
+example.com/repository
+
+Live Demo:
+example.com
+
+Description:
+Responsive frontend implementation completed.
+
+Create an analysis panel:
+
+AI VERIFICATION PREVIEW
+
+Responsive UI       ✓
+Frontend complete   ✓
+Deployment active   ✓
+Documentation       ✓
+
+Demo confidence:
+94%
+
+Clearly display:
+
+"Demo analysis — real AI verification will be connected in a later phase."
+
+Buttons:
+
+"Approve Milestone"
+"Request Changes"
+
+==================================================
+PAYMENT FLOW
+==================================================
+
+For MVP, create a mock blockchain service.
+
+IMPORTANT:
+Every mock transaction must be visually labeled:
+
+"Demo Transaction"
+
+or
+
+"Mock Blockchain"
+
+When client clicks:
+
+Approve Milestone
+
+Show confirmation modal:
+
+Approve milestone for ₹10,000?
+
+Then execute:
+
+mockBlockchainService.approveMilestone()
+
+Update milestone status:
+
+APPROVED
+
+Then:
+
+mockBlockchainService.releasePayment()
+
+Update:
+
+PAYMENT RELEASED
+
+Display:
+
+✓ Payment Released
+
+₹10,000
+
+Demo Transaction ID:
+DEMO-8F29A21C
+
+Do not display fake real blockchain transaction hashes.
+
+Create a service interface such as:
+
+BlockchainService
+
+with methods:
+
+createProject()
+lockFunds()
+approveMilestone()
+releasePayment()
+getTransaction()
+getProjectState()
+
+Implement:
+
+MockBlockchainService
+
+The architecture must make it easy to later add:
+
+StellarBlockchainService
+
+without changing the UI.
+
+==================================================
+PROOFSCORE
+==================================================
+
+Create a professional reputation system.
+
+Profile:
+
+Alex Sharma
+
+ProofScore
+94
+
+Stats:
+
+17 Projects Completed
+63 Verified Milestones
+94% On-Time
+1 Dispute
+₹4.8L Verified Work
+
+Create a visual score ring.
+
+Create achievement cards:
+
+Verified Builder
+17 completed projects
+
+Milestone Master
+63 verified milestones
+
+On-Time Performer
+94% on-time
+
+Add a section:
+
+"Verified Work History"
+
+Each project should show:
+- Project name
+- Client
+- Amount
+- Milestones
+- Completion date
+- Verification status
+
+IMPORTANT:
+Clearly state that ProofScore is currently an MVP reputation metric and will later be backed by blockchain credentials.
+
+==================================================
+TRANSACTIONS
+==================================================
+
+Create a transaction history page.
+
+Columns:
+
+Date
+Project
+Milestone
+Amount
+Status
+Transaction
+
+Example:
+
+Oct 01
+Butter Brews Bistro
+UI Design
+₹5,000
+Released
+Demo Transaction
+
+Use badges.
+
+Add filters:
+- All
+- Pending
+- Released
+- Failed
+
+==================================================
+DATABASE
+==================================================
+
+Create MongoDB/Mongoose models for:
+
+User
+
+Fields:
+- name
+- email
+- passwordHash
+- role
+- avatar
+- proofScore
+- createdAt
+
+Project
+
+Fields:
+- title
+- description
+- clientId
+- workerId
+- budget
+- currency
+- status
+- startDate
+- endDate
+- createdAt
+
+Milestone
+
+Fields:
+- projectId
+- title
+- description
+- amount
+- dueDate
+- status
+- proofId
+- paymentStatus
+- createdAt
+
+Proof
+
+Fields:
+- milestoneId
+- submittedBy
+- description
+- githubUrl
+- liveUrl
+- additionalUrl
+- fileUrl
+- status
+- submittedAt
+
+Transaction
+
+Fields:
+- projectId
+- milestoneId
+- amount
+- type
+- status
+- demoTransactionId
+- createdAt
+
+==================================================
+API
+==================================================
+
+Create clean REST APIs.
+
+Authentication:
+
+POST /api/auth/signup
+POST /api/auth/login
+GET /api/auth/me
+
+Projects:
+
+GET /api/projects
+POST /api/projects
+GET /api/projects/:id
+PUT /api/projects/:id
+
+Milestones:
+
+POST /api/projects/:id/milestones
+GET /api/projects/:id/milestones
+PUT /api/milestones/:id
+
+Proof:
+
+POST /api/milestones/:id/proof
+GET /api/milestones/:id/proof
+PUT /api/proof/:id
+
+Transactions:
+
+GET /api/transactions
+
+Reputation:
+
+GET /api/reputation/:userId
+
+==================================================
+AUTHENTICATION
+==================================================
+
+Implement proper MVP authentication.
+
+Use:
+- bcrypt for password hashing
+- JWT or secure session-based authentication
+- protected routes
+
+Never store plain-text passwords.
+
+Create demo accounts if useful:
+
+Client:
+client@proofflow.demo
+
+Worker:
+worker@proofflow.demo
+
+Make demo credentials clearly labeled as demo credentials.
+
+==================================================
+DEMO DATA
+==================================================
+
+Seed the database with realistic demo data.
+
+Use a fictional project:
+
+Butter Brews Bistro Website
+
+Budget:
+₹30,000
+
+Milestones:
+
+UI Design:
+₹5,000
+Verified
+
+Frontend Development:
+₹10,000
+Verified
+
+Backend Development:
+₹7,000
+Under Review
+
+Deployment:
+₹8,000
+Pending
+
+Also create several additional projects so the dashboard does not look empty.
+
+Use realistic Indian currency formatting.
+
+==================================================
+COMPONENT STRUCTURE
+==================================================
+
+Create reusable components.
+
+Example:
+
+src/
+  components/
+    layout/
+    navigation/
+    dashboard/
+    projects/
+    milestones/
+    proof/
+    reputation/
+    transactions/
+    ui/
+
+  pages/
+  services/
+    api/
+    blockchain/
+      blockchainService.ts
+      mockBlockchainService.ts
+
+  hooks/
+  types/
+  utils/
+
+Keep components modular.
+
+Do not put the entire application into one huge component.
+
+==================================================
+ERROR HANDLING
+==================================================
+
+Implement:
+
+- Loading states
+- Empty states
+- Error states
+- Toast notifications
+- Form validation
+- API error handling
+- Confirmation modals
+
+Do not leave broken buttons.
+
+If a feature is not implemented yet, show a clear "Coming Soon" state instead of silently failing.
+
+==================================================
+RESPONSIVENESS
+==================================================
+
+The application must work on:
+
+Desktop
+Laptop
+Tablet
+Mobile
+
+The sidebar should become a mobile navigation menu.
+
+Tables should become responsive cards on small screens.
+
+==================================================
+IMPORTANT WEB3 PREPARATION
+==================================================
+
+Create a clean abstraction:
+
+interface BlockchainService {
+  createProject(): Promise<any>;
+  lockFunds(): Promise<any>;
+  approveMilestone(): Promise<any>;
+  releasePayment(): Promise<any>;
+  getTransaction(): Promise<any>;
+}
+
+Implement:
+
+MockBlockchainService
+
+DO NOT connect to a blockchain yet.
+
+Add comments explaining where real Stellar/Soroban integration will be inserted later.
+
+Do not create fake wallet addresses.
+
+Do not create fake blockchain explorer links.
+
+==================================================
+CODE QUALITY
+==================================================
+
+Requirements:
+
+- TypeScript throughout
+- No unnecessary dependencies
+- No Tailwind
+- No Prisma
+- No giant components
+- No duplicated logic
+- Environment variables for secrets
+- Proper API error handling
+- Clean naming
+- Reusable components
+- Responsive design
+- Accessible buttons/forms
+- Semantic HTML
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Build the application incrementally.
+
+First make:
+1. Application shell
+2. Authentication
+3. Dashboard
+4. Projects
+5. Milestones
+6. Proof submission
+7. Proof review
+8. Mock payment flow
+9. ProofScore
+10. Transactions
+
+Then connect everything to MongoDB.
+
+Make sure the entire MVP runs successfully.
+
+Before finishing:
+- Check for TypeScript errors
+- Check for broken imports
+- Check all routes
+- Check forms
+- Check API calls
+- Check responsive layout
+- Check MongoDB connection
+- Check authentication
+- Check demo data
+- Check mock blockchain flow
+
+The final result should feel like a polished startup product that is ready to demonstrate to hackathon judges.
+
+Do not stop at generating static UI.
+All MVP flows should actually work end-to-end using MongoDB and the mock blockchain service.
