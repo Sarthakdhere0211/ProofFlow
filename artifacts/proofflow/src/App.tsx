@@ -1,62 +1,40 @@
-import { type ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ErrorBoundary } from '@/components/error-boundary';
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import NotFound from '@/pages/not-found';
-import {
-  Route,
-  Switch,
-  useLocation,
-  Router as WouterRouter,
-} from 'wouter';
+import { AppProvider, ToastHost } from './context/AppContext';
+import { Shell, StorageWarning } from './components/shared';
+import { Dashboard } from './pages/Dashboard';
+import { MilestoneDetail, ProjectDetail } from './pages/ProjectDetail';
+import { ProofReview } from './pages/ProofReview';
+import { NewProject, ProjectsPage } from './pages/Projects';
+import { AuthPage, Landing } from './pages/PublicPages';
+import { NotFoundPage, Profile, Reputation, Settings, Transactions } from './pages/WorkspacePages';
+import { Route, Switch } from 'wouter';
 
-const queryClient = new QueryClient();
-
-function Home() {
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Replit Agent is building...
-        </h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Your app will appear here once it's ready.
-        </p>
-      </div>
-    </div>
-  );
+function WorkspaceRoutes() {
+  return <Shell><Switch>
+    <Route path="/dashboard" component={Dashboard} />
+    <Route path="/projects" component={ProjectsPage} />
+    <Route path="/projects/new" component={NewProject} />
+    <Route path="/projects/:id/proof/:milestoneId" component={ProofReview} />
+    <Route path="/projects/:id/milestones/:milestoneId" component={MilestoneDetail} />
+    <Route path="/projects/:id" component={ProjectDetail} />
+    <Route path="/profile" component={Profile} />
+    <Route path="/reputation" component={Reputation} />
+    <Route path="/transactions" component={Transactions} />
+    <Route path="/settings" component={Settings} />
+    <Route component={NotFoundPage} />
+  </Switch></Shell>;
 }
 
-function Router() {
-  return (
-    // Keep a shared shell (sidebar, navbar) outside the boundary so it
-    // survives a page crash.
-    <RoutedErrorBoundary>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route component={NotFound} />
-      </Switch>
-    </RoutedErrorBoundary>
-  );
-}
-
-function RoutedErrorBoundary({ children }: { children: ReactNode }) {
-  const [location] = useLocation();
-  return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
+function AppRoutes() {
+  return <Switch>
+    <Route path="/" component={Landing} />
+    <Route path="/login"><AuthPage /></Route>
+    <Route path="/signup"><AuthPage signup /></Route>
+    <Route><WorkspaceRoutes /></Route>
+  </Switch>;
 }
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
+  return <AppProvider><StorageWarning /><AppRoutes /><ToastHost /></AppProvider>;
 }
 
 export default App;

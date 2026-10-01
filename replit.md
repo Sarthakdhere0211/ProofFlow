@@ -1,44 +1,47 @@
-# [Project name]
+# ProofFlow
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A browser-based demo for client–worker milestone planning, proof submission, human review, demo payment records, and ProofScore.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/proofflow run dev` — run the ProofFlow web app
+- `pnpm --filter @workspace/proofflow run typecheck` — typecheck the app
+- `pnpm run typecheck` — typecheck all workspace packages
+- No database or third-party credentials are required for the current demo.
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- pnpm workspaces, React, TypeScript, Vite, and wouter
+- Plain CSS, Lucide icons, and browser `localStorage` for demo persistence
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/proofflow/src/pages/` — public pages and client/worker workspace routes
+- `artifacts/proofflow/src/services/store.ts` — demo data, browser persistence, and domain types
+- `artifacts/proofflow/src/services/blockchain.ts` — mock payment service abstraction
+- `artifacts/proofflow/src/index.css` — app theme and responsive styles
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Keep the current MVP browser-only; do not add a database until the user asks to resume that work.
+- Treat sign-in and role switching as demo access, not production authentication.
+- Label simulated payment records as `Demo Transaction`; never present them as real blockchain activity.
+- Keep the AI Verification Preview illustrative and make clear no model analyzed the proof.
+- Proof attachments currently retain only the selected filename in the browser demo.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Clients can create projects and milestones, review worker-submitted proof, approve work or request changes, and track demo payment status. Workers can switch roles, submit proof links/notes, and view project progress and reputation. The landing page explains the product and its future-facing Web3 direction without claiming those features are live.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- The user asked not to build a database for now.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Browser-local demo records do not sync across devices or browsers.
+- File selection is a preview only; no file bytes are uploaded or persisted.
+- Mock approval only changes local demo state; it does not escrow or move funds.
 
 ## Pointers
 
