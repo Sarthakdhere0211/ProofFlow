@@ -7,9 +7,10 @@ type AppContextValue = {
   persistenceWarning: string | null;
   notify: (message: string) => void;
 };
+
 const AppContext = createContext<AppContextValue | null>(null);
 
-export function notify(message: string) {
+export function notify(message: string): void {
   window.dispatchEvent(new CustomEvent('pf-toast', { detail: message }));
 }
 
@@ -22,7 +23,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setStore(current => {
       const next = fn(current);
       if (!writeStore(next)) {
-        setPersistenceWarning('Browser storage is unavailable or full. Your demo remains usable in this tab, but changes may not persist.');
+        setPersistenceWarning(
+          'Browser storage is unavailable or full. Your demo remains usable in this tab, but changes may not persist.',
+        );
       } else {
         setPersistenceWarning(null);
       }
@@ -32,11 +35,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!writeStore(store)) {
-      setPersistenceWarning('Browser storage is unavailable or full. Your demo remains usable in this tab, but changes may not persist.');
+      setPersistenceWarning(
+        'Browser storage is unavailable or full. Your demo remains usable in this tab, but changes may not persist.',
+      );
     }
   }, [store]);
 
-  const value = useMemo(() => ({ store, update, persistenceWarning, notify }), [store, persistenceWarning]);
+  const value = useMemo(
+    () => ({ store, update, persistenceWarning, notify }),
+    [store, persistenceWarning],
+  );
+
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 

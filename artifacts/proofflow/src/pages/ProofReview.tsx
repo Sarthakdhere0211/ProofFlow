@@ -6,7 +6,7 @@ import { Badge, Button, EmptyState, Field, PageHead, Timeline, dateLabel, displa
 import { blockchainService } from '../services/blockchain';
 import { makeId, money, type Milestone, type Proof, type Project } from '../services/store';
 
-const blankProof = (): Proof => ({ id: '', title: '', description: '', githubUrl: '', liveUrl: '', additionalUrl: '', fileName: '', notes: '', submittedAt: '', status: 'submitted' });
+const blankProof = (): Proof => ({ id: '', title: '', description: '', githubUrl: '', liveUrl: '', additionalUrl: '', fileName: '', contentHash: null, notes: '', submittedAt: '', status: 'submitted' });
 
 export function ProofReview() {
   const { id, milestoneId } = useParams<{ id: string; milestoneId: string }>();
@@ -39,6 +39,7 @@ function ProofReviewView({ project, milestone, isClient, confirmation, setConfir
 }) {
   const { update } = useApp();
   const [form, setForm] = useState<Proof>(() => milestone.proof ?? blankProof());
+  const [approving, setApproving] = useState(false);
   const edit = (key: keyof Proof, value: string) => setForm(current => ({ ...current, [key]: value }));
 
   const submitProof = (event: FormEvent) => {
@@ -47,7 +48,13 @@ function ProofReviewView({ project, milestone, isClient, confirmation, setConfir
       setError('Add a proof title and a short description before submitting.');
       return;
     }
-    const proof: Proof = { ...form, id: form.id || makeId('proof'), submittedAt: new Date().toISOString(), status: 'submitted' };
+    const proof: Proof = {
+      ...form,
+      id: form.id || makeId('proof'),
+      submittedAt: new Date().toISOString(),
+      status: 'submitted',
+      contentHash: null,
+    };
     update(current => ({ ...current, projects: current.projects.map(item => item.id === project.id ? {
       ...item, milestones: item.milestones.map(m => m.id === milestone.id ? { ...m, proof, status: 'under_review', proofStatus: 'submitted' } : m),
     } : item) }));
@@ -66,20 +73,29 @@ function ProofReviewView({ project, milestone, isClient, confirmation, setConfir
     notify('Changes requested. Worker can revise and resubmit.');
   };
   const approve = async () => {
-    await blockchainService.approveMilestone(project.id, milestone.id);
-    const transaction = await blockchainService.releasePayment(project, milestone);
-    update(current => ({
-      ...current,
-      projects: current.projects.map(item => item.id === project.id ? {
-        ...item, milestones: item.milestones.map(m => m.id === milestone.id ? {
-          ...m, status: 'verified', proofStatus: 'approved', paymentStatus: 'released',
-          proof: m.proof ? { ...m.proof, status: 'approved' } : undefined,
-        } : m),
-      } : item),
-      transactions: [...current.transactions, transaction],
-    }));
-    setConfirmation(null);
-    notify('Milestone approved. Demo Transaction recorded.');
+    if (approving) return; // prevent double-click
+    setApproving(true);
+    try {
+      const txState = await blockchainService.approveMilestone({
+        projectContractId: project.contractProjectId ?? project.id,
+        milestoneIndex: project.milestones.findIndex(m => m.id === milestone.id),
+      });
+      const transaction = await blockchainService.releasePayment(project, milestone);
+      update(current => ({
+        ...current,
+        projects: current.projects.map(item => item.id === project.id ? {
+          ...item, milestones: item.milestones.map(m => m.id === milestone.id ? {
+            ...m, status: 'verified' as const, proofStatus: 'approved' as const, paymentStatus: 'released' as const,
+            proof: m.proof ? { ...m.proof, status: 'approved' as const } : undefined,
+          } : m),
+        } : item),
+        transactions: [...current.transactions, { ...transaction, txHash: txState.txHash }],
+      }));
+      setConfirmation(null);
+      notify('Milestone approved. Demo Transaction recorded.');
+    } finally {
+      setApproving(false);
+    }
   };
 
   return <>
@@ -115,8 +131,7 @@ function ProofReviewView({ project, milestone, isClient, confirmation, setConfir
     </div>
     {isClient && milestone.proof && milestone.paymentStatus !== 'released' && <div style={{ display: 'flex', gap: 9, justifyContent: 'flex-end', marginTop: 16 }}><Button variant="secondary" testId="button-request-changes" onClick={() => setConfirmation('changes')}>Request changes</Button><Button testId="button-approve-milestone" onClick={() => setConfirmation('approve')}><CheckCircle2 />Approve milestone</Button></div>}
     {milestone.paymentStatus === 'released' && <div className="notice" style={{ marginTop: 16 }}><b>Payment released — Demo Transaction</b><br />{money(milestone.amount, project.currency)} · No real funds moved.</div>}
-    {confirmation && <ReviewConfirmation mode={confirmation} milestone={milestone} project={project} onClose={() => setConfirmation(null)} onConfirm={() => confirmation === 'approve' ? void approve() : requestChanges()} />}
-  </>;
+    {confirmation && <ReviewConfirmation mode={confirmation} milestone={milestone} project={project} onClose={() => setConfirmation(null)} onConfirm={() => confirmation === 'approve' ? void approve() : requestChanges()} />}  </>;
 }
 
 function ReviewEvidence({ project, milestone }: { project: Project; milestone: Milestone }) {

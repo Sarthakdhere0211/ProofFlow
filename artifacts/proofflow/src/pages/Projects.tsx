@@ -47,14 +47,24 @@ export function NewProject() {
       workerId: store.user.role === 'worker' ? 'alex' : 'demo-worker', category: form.category,
       budget: total, currency: isSupportedCurrency(form.currency) ? form.currency : 'INR',
       startDate: form.startDate, endDate: form.endDate, status: 'active',
+      contractStatus: null,
+      contractProjectId: null,
       milestones: milestones.map(item => ({
         id: makeId('milestone'), title: item.title.trim(), description: item.description,
-        amount: Number(item.amount), dueDate: item.dueDate || form.endDate, status: 'pending',
-        proofStatus: 'not_submitted', paymentStatus: 'pending',
+        amount: Number(item.amount), dueDate: item.dueDate || form.endDate, status: 'pending' as const,
+        proofStatus: 'not_submitted' as const, paymentStatus: 'pending' as const,
+        contractStatus: null,
+        contractMilestoneIndex: null,
       })),
     };
-    await blockchainService.createProject(project);
-    await blockchainService.lockFunds(project);
+    await blockchainService.createProject({
+      clientAddress: 'demo-client',
+      workerAddress: store.user.id,
+      totalAmount: String(total),
+      tokenAddress: 'demo-xlm',
+      milestoneAmounts: milestones.map(m => String(Number(m.amount))),
+    });
+    await blockchainService.fundProject('demo-contract-project', String(total));
     update(current => ({ ...current, projects: [project, ...current.projects] }));
     notify('Project created in this browser demo.');
     navigate(`/projects/${project.id}`);

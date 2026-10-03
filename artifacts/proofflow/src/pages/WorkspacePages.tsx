@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { BadgeCheck, CircleHelp, Search, Settings as SettingsIcon } from 'lucide-react';
 import { notify, useApp } from '../context/AppContext';
 import { Badge, Button, EmptyState, Field, PageHead, dateLabel, displayStatus } from '../components/shared';
-import { money, seedStore } from '../services/store';
+import { money, seedStore, verifiedMilestoneCount, completedProjectCount } from '../services/store';
 
 export function Transactions() {
   const { store } = useApp();
@@ -40,15 +40,21 @@ export function Profile() {
 
 export function Reputation() {
   const { store } = useApp();
+  const verified = verifiedMilestoneCount(store.projects);
+  const completed = completedProjectCount(store.projects);
   const work = store.projects.filter(project => project.status === 'completed' || project.milestones.some(milestone => milestone.status === 'verified'));
   return <>
     <PageHead eyebrow="Work you can stand behind" title="ProofScore" description="A readable summary of your verified work history." />
-    <div className="detail-grid"><section className="card score-card"><div className="eyebrow">MVP reputation metric</div><div className="score-number">{store.user.proofScore}</div><div className="score-label">Excellent verification history</div><div className="score-stats"><div><b>{17 + work.length}</b>projects completed</div><div><b>{63 + store.projects.reduce((sum, project) => sum + project.milestones.filter(milestone => milestone.status === 'verified').length, 0)}</b>verified milestones</div></div></section>
-      <section className="card panel"><div className="eyebrow">Recognition</div><h2 className="section-title">Built on clear outcomes</h2>{[['Verified Builder', '17 completed projects'], ['Milestone Master', '63 verified milestones'], ['On-Time Performer', '94% on-time demo history']].map(([title, description]) => <div className="link-row" key={title}><span><b>{title}</b><br /><small className="activity-time">{description}</small></span><BadgeCheck size={18} color="#438b76" /></div>)}</section>
+    <div className="detail-grid"><section className="card score-card"><div className="eyebrow">Reputation metric</div><div className="score-number">{store.user.proofScore}</div><div className="score-label">Based on verified milestones in this workspace</div><div className="score-stats"><div><b>{completed}</b>projects completed</div><div><b>{verified}</b>verified milestones</div></div></section>
+      <section className="card panel"><div className="eyebrow">Recognition</div><h2 className="section-title">Built on clear outcomes</h2>
+        {verified >= 5 && <div className="link-row"><span><b>Verified Builder</b><br /><small className="activity-time">{verified} verified milestones</small></span><BadgeCheck size={18} color="#438b76" /></div>}
+        {completed >= 1 && <div className="link-row"><span><b>Project Completer</b><br /><small className="activity-time">{completed} project{completed === 1 ? '' : 's'} completed</small></span><BadgeCheck size={18} color="#438b76" /></div>}
+        {verified === 0 && completed === 0 && <p className="section-sub" style={{ padding: '12px 0' }}>Complete and verify milestones to earn recognition badges.</p>}
+      </section>
     </div>
-    <div className="disclaimer" style={{ marginTop: 17 }}>ProofScore is an MVP reputation metric using demo values. It is not a credit score or a blockchain credential. Portable on-chain credentials are a future possibility, not active functionality.</div>
-    <section style={{ marginTop: 24 }}><div className="panel-head" style={{ paddingLeft: 0 }}><div><h2 className="section-title">Verified work history</h2><p className="section-sub">Milestones verified in this browser demo.</p></div></div>
-      <div className="project-list">{work.map(project => <div key={project.id} className="project-row"><div><div className="project-title">{project.title}</div><div className="project-meta">Client · {project.clientId === 'client-1' ? 'Butter Brews Bistro' : 'Project partner'}</div></div><div><span className="project-meta">{project.milestones.filter(milestone => milestone.status === 'verified').length} verified milestones</span></div><span className="badge good">Verified</span><span className="currency">{money(project.budget, project.currency)}</span></div>)}</div>
+    <div className="disclaimer" style={{ marginTop: 17 }}>ProofScore reflects verified milestones in this browser demo. In the production version, it will be derived from on-chain events. It is not a credit score.</div>
+    <section style={{ marginTop: 24 }}><div className="panel-head" style={{ paddingLeft: 0 }}><div><h2 className="section-title">Verified work history</h2><p className="section-sub">Milestones verified in this workspace.</p></div></div>
+      <div className="project-list">{work.length ? work.map(project => <div key={project.id} className="project-row"><div><div className="project-title">{project.title}</div><div className="project-meta">Category: {project.category}</div></div><div><span className="project-meta">{project.milestones.filter(milestone => milestone.status === 'verified').length} verified milestones</span></div><span className="badge good">Verified</span><span className="currency">{money(project.budget, project.currency)}</span></div>) : <div className="card"><EmptyState title="No verified work yet" body="Approve milestones to build your reputation." /></div>}</div>
     </section>
   </>;
 }

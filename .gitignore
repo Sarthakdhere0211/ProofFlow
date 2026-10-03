@@ -27,6 +27,18 @@ node_modules
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Environment variables — NEVER commit secrets
+.env
+.env.local
+.env.production
+.env.staging
+.env.*.local
+*.pem
+*.p8
+*.key
+wallet-seed.txt
+wallet-secret.txt
+
 # misc
 /.sass-cache
 /connect.lock

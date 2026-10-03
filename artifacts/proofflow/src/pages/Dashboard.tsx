@@ -2,7 +2,7 @@ import { Link } from 'wouter';
 import { BadgeCheck, Banknote, BriefcaseBusiness, CheckCircle2, ChevronRight, Plus, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Badge, PageHead, ProjectCard, Stat, dateLabel } from '../components/shared';
-import { money } from '../services/store';
+import { money, verifiedMilestoneCount, completedProjectCount } from '../services/store';
 
 function localizedGreeting(now = new Date()) {
   const hour = now.getHours();
@@ -15,8 +15,8 @@ export function Dashboard() {
   const { store } = useApp();
   const projects = store.projects;
   const active = projects.filter(project => project.status === 'active');
-  const completed = projects.filter(project => project.status === 'completed');
-  const verified = projects.reduce((sum, project) => sum + project.milestones.filter(milestone => milestone.status === 'verified').length, 0);
+  const verified = verifiedMilestoneCount(projects);
+  const completed = completedProjectCount(projects);
   const awaiting = projects.flatMap(project => project.milestones.filter(milestone => milestone.proofStatus === 'submitted').map(milestone => ({ project, milestone })));
   const total = projects.reduce((sum, project) => sum + project.budget, 0);
   const { greeting, date } = localizedGreeting();
@@ -27,9 +27,9 @@ export function Dashboard() {
     <div className="notice"><b>Demo workspace.</b> Project and payment records are stored only in this browser. All generated payment records are clearly marked Demo Transaction.</div>
     <div className="stats-grid">
       <Stat label="Active projects" value={`${active.length}`} detail="In progress now" Icon={BriefcaseBusiness} />
-      <Stat label="Completed projects" value={`${completed.length + 17}`} detail="Demo history included" Icon={CheckCircle2} />
+      <Stat label="Completed projects" value={`${completed}`} detail="In this workspace" Icon={CheckCircle2} />
       <Stat label="Project value" value={money(total)} detail="Across all visible projects" Icon={Banknote} />
-      <Stat label="Verified milestones" value={`${verified + 63}`} detail="MVP demo reputation metric" Icon={BadgeCheck} />
+      <Stat label="Verified milestones" value={`${verified}`} detail="Based on your workspace" Icon={BadgeCheck} />
     </div>
     <div className="dash-grid">
       <section className="card"><div className="panel-head"><div><h2 className="section-title">Your projects</h2><p className="section-sub">A quick pulse on active commitments.</p></div><Link className="btn btn-quiet" href="/projects" data-testid="link-all-projects">All projects <ArrowRight size={14} /></Link></div>
@@ -37,7 +37,7 @@ export function Dashboard() {
       </section>
       <div style={{ display: 'grid', gap: 16, alignContent: 'start' }}>
         <section className="card score-card"><div className="eyebrow">Your ProofScore</div><div className="score-number">{store.user.proofScore}</div><div className="score-label">Excellent verification history</div>
-          <div className="score-stats"><div><b>{verified + 63}</b>verified milestones</div><div><b>94%</b>on-time demo rate</div></div>
+          <div className="score-stats"><div><b>{verified}</b>verified milestones</div><div><b>{completed}</b>completed projects</div></div>
           <Link href="/reputation" className="btn btn-quiet" style={{ paddingLeft: 0, marginTop: 9 }} data-testid="link-score-details">View reputation <ArrowRight size={14} /></Link>
         </section>
         <section className="card panel"><h2 className="section-title">Needs your attention</h2><p className="section-sub">{awaiting.length ? `${awaiting.length} proof${awaiting.length === 1 ? '' : 's'} waiting for review.` : 'Nothing waiting for review.'}</p>
